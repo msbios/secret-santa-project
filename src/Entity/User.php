@@ -24,8 +24,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
      * @ORM\Column(type="string", length=13, unique=true)
      * @Assert\NotBlank()
      * @Assert\Length(
