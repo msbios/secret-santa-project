@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+    <main class="form-registration">
+        {{ form_start(registrationForm) }}
+
+        <img class="mb-4" src="{{ asset('logo.png') }}" alt="" height="200">
+        <h1 class="h3 mb-3 fw-normal">Зарегистрируйтесь</h1>
+
+        <div class="form-floating">
+            {{ form_widget(registrationForm.phone, {attr: {class: 'form-control'}}) }}
+            {{ form_label(registrationForm.phone) }}
+            {{ form_errors(registrationForm.phone) }}
+        </div>
+
+        <div class="form-floating">
+            {{ form_widget(registrationForm.plainPassword, {attr: {class: 'form-control'}}) }}
+            {{ form_label(registrationForm.plainPassword) }}
+            {{ form_errors(registrationForm.plainPassword) }}
+        </div>
+
+        <div class="form-floating">
+            {{ form_widget(registrationForm.surname, {attr: {class: 'form-control'}}) }}
+            {{ form_label(registrationForm.surname) }}
+            {{ form_errors(registrationForm.surname) }}
+        </div>
+
+        <div class="form-floating last">
+            {{ form_widget(registrationForm.firstName, {attr: {class: 'form-control'}}) }}
+            {{ form_label(registrationForm.firstName) }}
+            {{ form_errors(registrationForm.firstName) }}
+        </div>
+
+        <input type="hidden" name="_token" value="{{ csrf_token('authenticate') }}" />
+
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Регистрация</button>
+        <a href="{{ url('app_login') }}" class="w-100 btn btn-link">Вход</a>
+        <p class="mt-5 mb-3 text-muted">&copy; {{ 'now' | date('Y') }}</p>
+        {{ form_end(registrationForm) }}
+    </main>
+{% endblock %}

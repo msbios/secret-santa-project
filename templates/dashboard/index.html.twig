@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello DashboardController!{% endblock %}
+
+{% block body %}
+    <main class="dashboard-container bg-white p-5" style=";">
+        <img class="mb-4" src="{{ asset('logo.png') }}" alt="" height="200">
+        <p class="h4">Привет Ярошенька!</p>
+        <p>Кто же тот счастливчик которому ты делаешь подарок?</p>
+        <p>Совсем скоро когда все зарегистрируются ты станешь будешь делать волшебство</p>
+        <a href="{{ url('app_logout') }}" class="w-100 btn btn-link">Выйти</a>
+    </main>
+{% endblock %}

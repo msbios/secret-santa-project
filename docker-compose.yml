@@ -1,0 +1,105 @@
+version: '3.5'
+
+services:
+
+  php-fpm:
+    container_name: santa-php-fpm-${APP_ENV:-dev}
+    build:
+      context: .
+      target: ${APP_ENV:-dev}
+      dockerfile: .docker/php-fpm/Dockerfile
+      args:
+        APP_ENV: ${APP_ENV:-dev}
+        TZ: ${TZ:-Europe/Kiev}
+    volumes:
+      - ./:/var/www/html:rw
+      - ~/.composer:/root/.composer/cache
+    networks:
+      - santa
+
+  nginx:
+    container_name: santa-nginx-${APP_ENV:-dev}
+    build:
+      context: .
+      target: ${APP_ENV:-dev}
+      dockerfile: .docker/nginx/Dockerfile
+      args:
+        APP_ENV: ${APP_ENV:-dev}
+    volumes:
+      - ./:/var/www/html:rw
+      - ./var/log/nginx:/var/log/nginx:rw
+    ports:
+      - ${NGINX_PORT:-8080}:80
+    depends_on:
+      - php-fpm
+    networks:
+      - santa
+  ###> doctrine/doctrine-bundle ###
+  mariadb:
+    container_name: santa-mariadb-${APP_ENV:-dev}
+    build:
+      context: .
+      target: ${APP_ENV:-dev}
+      dockerfile: .docker/mariadb/Dockerfile
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-santa.dev}
+      MYSQL_USER: ${MYSQL_USER:-santa.dev}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-XtByqo%asj81CJmM[dfC}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-EtExf4QyJ6Gca7a6}
+    ports:
+      - ${MYSQL_PORT:-9033}:3306
+    volumes:
+      - santa-data:/var/lib/mysql
+    networks:
+      - santa
+  ###< doctrine/doctrine-bundle ###
+  pma:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: santa-pma-${APP_ENV:-dev}
+    ports:
+      - ${PMA_PORT:-33080}:80
+    environment:
+      PMA_HOST: ${PMA_HOST:-mariadb}
+    depends_on:
+      - mariadb
+    networks:
+      - santa
+
+    #  pgsql:
+    #    container_name: santa-pgsql-${APP_ENV:-dev}
+    #    image: postgres:12.1-alpine
+    #    volumes:
+    #      - santa-data:/var/lib/postgresql/data
+    #    environment:
+    #      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+    #      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    #      POSTGRES_DB: ${POSTGRES_DB:-ic.dev}
+    #    ports:
+    #      - ${PGSQL_PORT:-5432}:5432
+    #    networks:
+    #      - santa
+    #
+    #  pgadmin:
+    #    container_name: santa-pgadmin-${APP_ENV:-dev}
+    #    image: dpage/pgadmin4
+    #    environment:
+    #      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin}
+    #      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-pgadmin}
+    #    ports:
+    #      - ${PGADMIN_PORT:-5050}:80
+    #    volumes:
+    #      - santa-pgadmin:/var/lib/pgadmin
+    #    depends_on:
+    #      - pgsql
+    #    networks:
+    #      - santa
+
+volumes:
+  ###> doctrine/doctrine-bundle ###
+  santa-data:
+    driver: local
+###< doctrine/doctrine-bundle ###
+
+networks:
+  santa:
+    driver: bridge
