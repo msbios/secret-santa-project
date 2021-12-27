@@ -42,7 +42,7 @@ class DashboardController extends AbstractController
     /**
      * @param EntityManagerInterface $entityManager
      * @return Response
-     * @Route("/dashboard/rand", name="dashboard_rand")
+     * @Route("/dashboard_rand", name="dashboard_rand")
      */
     public function rand(EntityManagerInterface $entityManager): Response
     {
