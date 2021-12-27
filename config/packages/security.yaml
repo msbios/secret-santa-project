@@ -18,6 +18,7 @@ security:
       pattern: ^/(_(profiler|wdt)|css|images|js)/
       security: false
     main:
+      # anonymous: true
       lazy: true
       provider: app_user_provider
       guard:
@@ -25,8 +26,7 @@ security:
           - App\Security\FormLoginAuthenticator
       entry_point: App\Security\FormLoginAuthenticator
       form_login: true
-      logout:
-        path: app_logout
+      logout: true
         # where to redirect after logout
         # target: app_any_route
 
@@ -35,6 +35,13 @@ security:
 
       # https://symfony.com/doc/current/security/impersonating_user.html
       # switch_user: true
+
+    dashboard:
+      # anonymous: true
+      provider: app_user_provider
+      guard:
+        authenticators:
+          - App\Security\FormLoginAuthenticator
 
   role_hierarchy:
     ROLE_ADMIN:

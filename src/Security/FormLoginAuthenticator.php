@@ -99,12 +99,12 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator implements P
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        /** @var CsrfToken $token */
-        $token = new CsrfToken('authenticate', $credentials['csrf_token']);
-
-        if (!$this->csrfTokenManager->isTokenValid($token)) {
-            throw new InvalidCsrfTokenException;
-        }
+        // /** @var CsrfToken $token */
+        // $token = new CsrfToken('authenticate', $credentials['csrf_token']);
+        //
+        // if (!$this->csrfTokenManager->isTokenValid($token)) {
+        //     throw new InvalidCsrfTokenException;
+        // }
 
         /** @var UserInterface $user */
         if ($user = $userProvider->loadUserByUsername($credentials['phone'])) {
