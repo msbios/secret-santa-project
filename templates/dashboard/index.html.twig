@@ -6,9 +6,15 @@
     <main class="dashboard-container bg-white p-5" style=";">
         <img class="mb-4" src="{{ asset('logo.png') }}" alt="" height="200">
         <p class="h4">Привет {{ user.firstName }}!</p>
-        <p>Кто же тот счастливчик которому ты делаешь подарок?</p>
-        <p>Совсем скоро когда все зарегистрируются ты станешь будешь делать волшебство</p>
-        <p class="text-muted">Зарегистрировано: <b>{{ total }}</b></p>
+        {% if user.child is defined %}
+            <p>Вот кто твой счастливчик, тот которому ты сделаешь подарок</p>
+            <p class="alert alert-info">{{ user.child.firstName }} {{ user.child.surName }}</p>
+            <p>Прояви свою смекалку и подари что-то интересное</p>
+        {% else %}
+            <p>Кто же тот счастливчик которому ты делаешь подарок?</p>
+            <p>Совсем скоро когда все зарегистрируются ты станешь будешь делать волшебство</p>
+            <p class="text-muted">Зарегистрировано: <b>{{ total }}</b></p>
+        {% endif %}
         <a href="{{ url('app_logout') }}" class="w-100 btn btn-link">Выйти</a>
     </main>
 {% endblock %}

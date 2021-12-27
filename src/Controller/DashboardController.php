@@ -25,7 +25,7 @@ class DashboardController extends AbstractController
      */
     private function current(): User
     {
-        return $this->userRepository->findOneBy(['child' => null], ['id' => 'ASC']);
+        return $this->userRepository->findOneBy([], ['id' => 'ASC']);
     }
 
     #[Route('/', name: 'dashboard')]
@@ -49,8 +49,8 @@ class DashboardController extends AbstractController
         $all = $this->userRepository->findAll();
 
         foreach ($all as $user) {
-            $isDone = false;
             do {
+                $isDone = false;
                 $children = $this->userRepository->findChildFor($user);
                 shuffle($children);
                 $child = $children[count($children) - 1];
