@@ -56,8 +56,7 @@ RUN curl -sS https://get.symfony.com/cli/installer | bash \
 # PROD env (kubernetes)
 FROM scratch as prod
 
-RUN /usr/bin/composer install --no-ansi --no-dev -n --no-plugins --no-progress --no-scripts --no-suggest -o \
-    && chown -R www-data:www-data .
+RUN /usr/bin/composer install --no-ansi --no-dev -n --no-plugins --no-progress --no-scripts --no-suggest -o
 
 USER www-data:www-data
 CMD ["php-fpm"]
