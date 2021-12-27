@@ -65,7 +65,6 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator implements P
      */
     public function supports(Request $request)
     {
-        dd($request);
         return 'app_login' === $request->attributes->get('_route')
             && $request->isMethod('POST');
     }
@@ -107,8 +106,6 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator implements P
             throw new InvalidCsrfTokenException;
         }
 
-        dd($userProvider->loadUserByUsername($credentials['phone']));
-
         /** @var UserInterface $user */
         if ($user = $userProvider->loadUserByUsername($credentials['phone'])) {
             return $user;
@@ -127,7 +124,6 @@ class FormLoginAuthenticator extends AbstractFormLoginAuthenticator implements P
      */
     public function checkCredentials($credentials, UserInterface $user)
     {
-        dd($this->passwordEncoder->isPasswordValid($user, $credentials['password']));
         return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
     }
 

@@ -20,16 +20,15 @@ security:
     main:
       lazy: true
       provider: app_user_provider
-      # entry_point: App\Security\LoginAuthenticator
-      # form_login: true
-      # logout:
-      #   path: app_logout
+      guard:
+        authenticators:
+          - App\Security\FormLoginAuthenticator
+      entry_point: App\Security\FormLoginAuthenticator
+      form_login: true
+      logout:
+        path: app_logout
         # where to redirect after logout
         # target: app_any_route
-#      guard:
-#        authenticators:
-#          - App\Security\FormLoginAuthenticator
-      entry_point: App\Security\FormLoginAuthenticator
 
       # activate different ways to authenticate
       # https://symfony.com/doc/current/security.html#the-firewall
@@ -46,9 +45,9 @@ security:
   access_control:
     # - { path: ^/admin, roles: ROLE_ADMIN }
     # - { path: ^/profile, roles: ROLE_USER }
-    # - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-    # - { path: ^/registration, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-    # - { path: ^/, roles: [ROLE_USER] }
+    - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/registration, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/, roles: [ROLE_USER] }
 
 when@test:
   security:
