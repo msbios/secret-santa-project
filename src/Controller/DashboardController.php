@@ -55,7 +55,8 @@ class DashboardController extends AbstractController
                 $children = $this->userRepository->findChildFor($user);
                 shuffle($children);
                 $child = $children[count($children) - 1];
-                if (!$this->userRepository->count(['child' => $child])) {
+                // if (!$this->userRepository->count(['child' => $child])) {
+                if (!$this->userRepository->hasSanta($child)) {
                     $user->setChild($child);
                     $entityManager->flush();
                     $isDone = false;
@@ -65,6 +66,6 @@ class DashboardController extends AbstractController
             } while ($isDone);
         }
 
-        return $this->redirectToRoute('dashboard');
+        return $this->redirectToRoute('app_login');
     }
 }

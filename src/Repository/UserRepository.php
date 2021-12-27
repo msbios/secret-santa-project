@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -47,4 +48,35 @@ class UserRepository extends ServiceEntityRepository
         ;
     }
     */
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function findChildFor(User $user): array
+    {
+        $all = $this->findAll();
+        $result = [];
+        foreach ($all as $key => $item) {
+            if (!$item->getId()->equals($user->getId())) {
+                $result[] = $item;
+            }
+        }
+
+        return $result;
+
+        // /** @var QueryBuilder $qb */
+        // $qb = $this->createQueryBuilder('u');
+        // $qb->where($qb->expr()->neq('u.id', $user->getId()));
+        // return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param User $user
+     * @return bool
+     */
+    public function hasSanta(User $user)
+    {
+        $user = $this->findOneBy(['child' => $user->getId()->toString()]);
+        return $user instanceof UserInterface;
+    }
 }
