@@ -56,7 +56,7 @@ class UserRepository extends ServiceEntityRepository
     {
         $all = $this->findAll();
         $result = [];
-        foreach ($all as $key => $item) {
+        foreach ($all as $item) {
             if (!$item->getId()->equals($user->getId())) {
                 $result[] = $item;
             }
