@@ -65,35 +65,6 @@ services:
     networks:
       - santa
 
-    #  pgsql:
-    #    container_name: santa-pgsql-${APP_ENV:-dev}
-    #    image: postgres:12.1-alpine
-    #    volumes:
-    #      - santa-data:/var/lib/postgresql/data
-    #    environment:
-    #      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-    #      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-    #      POSTGRES_DB: ${POSTGRES_DB:-ic.dev}
-    #    ports:
-    #      - ${PGSQL_PORT:-5432}:5432
-    #    networks:
-    #      - santa
-    #
-    #  pgadmin:
-    #    container_name: santa-pgadmin-${APP_ENV:-dev}
-    #    image: dpage/pgadmin4
-    #    environment:
-    #      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin}
-    #      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-pgadmin}
-    #    ports:
-    #      - ${PGADMIN_PORT:-5050}:80
-    #    volumes:
-    #      - santa-pgadmin:/var/lib/pgadmin
-    #    depends_on:
-    #      - pgsql
-    #    networks:
-    #      - santa
-
 volumes:
   ###> doctrine/doctrine-bundle ###
   santa-data:
