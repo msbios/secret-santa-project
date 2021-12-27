@@ -4,8 +4,6 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -49,16 +47,4 @@ class UserRepository extends ServiceEntityRepository
         ;
     }
     */
-
-    /**
-     * @param User $user
-     * @return array
-     */
-    public function findChildFor(User $user): array
-    {
-        /** @var QueryBuilder $qb */
-        $qb = $this->createQueryBuilder('u');
-        $qb->where($qb->expr()->neq('u.id', $user->getId()));
-        return $qb->getQuery()->getResult();
-    }
 }

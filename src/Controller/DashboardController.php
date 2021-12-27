@@ -11,27 +11,28 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractController
 {
+    /** @var UserRepository */
+    private $userRepository;
+
     /**
      * @param UserRepository $userRepository
      */
-    public function __construct(
-        private UserRepository $userRepository
-    )
+    public function __construct(UserRepository $userRepository)
     {
+        $this->userRepository = $userRepository;
     }
 
     /**
-     * @return User
+     * @param string $id
+     * @return Response
+     * @Route("/dashboard/{id}", name="dashboard")
      */
-    private function current(): User
+    public function index(string $id): Response
     {
-        return $this->userRepository->findOneBy([], ['id' => 'ASC']);
-    }
+        if (!$user = $this->userRepository->findOneBy(['id' => $id])) {
+            return $this->redirectToRoute('app_login');
+        }
 
-    #[Route('/', name: 'dashboard')]
-    public function index(): Response
-    {
-        $user = $this->current();
         return $this->render('dashboard/index.html.twig', [
             'total' => $this->userRepository->count([]),
             'user' => $user
@@ -41,8 +42,8 @@ class DashboardController extends AbstractController
     /**
      * @param EntityManagerInterface $entityManager
      * @return Response
+     * @Route("/dashboard/rand", name="dashboard_rand")
      */
-    #[Route('/rand', name: 'dashboard_rand')]
     public function rand(EntityManagerInterface $entityManager): Response
     {
         /** @var array $all */

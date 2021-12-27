@@ -5,88 +5,105 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @method string getUserIdentifier()
- * @UniqueEntity(fields={"phone"}, message="There is already an account with this phone")
+ * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields={"username"}, message="Данный номер уже зарегистрирован")
  */
-#[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: '`users`')]
-#[UniqueEntity(fields: 'phone', message: 'Данный номер телефона уже зарегистрирован')]
-class User implements UserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="uuid", unique=true)
+     * @ORM\GeneratedValue(strategy="UUID")
+     */
     private $id;
 
     /**
-     * @var string
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="NONE")
+     * @ORM\Column(type="string", length=13, unique=true)
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *     max=13,
+     *     minMessage="Номер телефона в формате +380XXXXXXXXX",
+     *     min=13,
+     *     maxMessage="Номер телефона в формате +380XXXXXXXXX"
+     * )
+     * Assert\Regex(pattern="/\+380\d{9}/", message="Номер должен быть формата +380XXXXXXXXX")
      */
-    #[ORM\Column(type: 'string', unique: true, length: 13)]
-    #[Assert\NotBlank]
-    #[Assert\Regex(pattern: "/\+380\d{9}/", message: "Номер должен быть формата +380XXXXXXXXX")]
-    private string $phone;
+    private string $username;
 
     /**
-     * @var string The hashed password
+     * @var string
+     * @ORM\Column(type="string")
      */
-    #[ORM\Column(type: 'string')]
     private string $password;
 
     /**
      * @var string|null
      */
-    protected string|null $plainPassword = null;
+    private ?string $plainPassword = null;
 
     /**
-     * @var string
+     * @var string|null
+     * @ORM\Column(type="string", nullable=true)
      */
-    #[ORM\Column(type: 'string')]
-    #[Assert\NotBlank]
-    private string $surname;
+    private ?string $surname;
 
     /**
-     * @var string
+     * @var string|null
+     * @ORM\Column(type="string", nullable=true)
      */
-    #[ORM\Column(type: 'string')]
-    #[Assert\NotBlank]
-    private string $firstName;
+    private ?string $firstName;
 
     /**
      * @var array
+     * @ORM\Column(type="json")
      */
-    #[ORM\Column(type: 'json')]
     protected array $roles = [];
 
     /**
      * @var User|null
+     * @ORM\OneToOne(targetEntity="User")
+     * @ORM\JoinColumn(name="child_id", referencedColumnName="id", nullable=true)
      */
-    #[ORM\OneToOne(targetEntity: 'User')]
-    #[ORM\JoinColumn(name: 'child_id', referencedColumnName: 'id', nullable: true)]
     private ?User $child = null;
 
-    public function getId(): ?int
+    public function getId()
     {
         return $this->id;
     }
 
     /**
-     * @return string
+     * @param mixed $id
+     * @return User
      */
-    public function getPhone(): string
+    public function setId($id)
     {
-        return $this->phone;
+        $this->id = $id;
+        return $this;
     }
 
     /**
-     * @param string $phone
+     * @return string
      */
-    public function setPhone(string $phone): void
+    public function getUsername(): string
     {
-        $this->phone = $phone;
+        return $this->username;
+    }
+
+    /**
+     * @param string $username
+     * @return User
+     */
+    public function setUsername(string $username): User
+    {
+        $this->username = $username;
+        return $this;
     }
 
     /**
@@ -99,9 +116,9 @@ class User implements UserInterface
 
     /**
      * @param string $password
-     * @return $this
+     * @return User
      */
-    public function setPassword(string $password): self
+    public function setPassword(string $password): User
     {
         $this->password = $password;
         return $this;
@@ -117,10 +134,12 @@ class User implements UserInterface
 
     /**
      * @param string|null $plainPassword
+     * @return User
      */
-    public function setPlainPassword(?string $plainPassword): void
+    public function setPlainPassword(?string $plainPassword): User
     {
         $this->plainPassword = $plainPassword;
+        return $this;
     }
 
     /**
@@ -133,10 +152,12 @@ class User implements UserInterface
 
     /**
      * @param string $surname
+     * @return User
      */
-    public function setSurname(string $surname): void
+    public function setSurname(string $surname): User
     {
         $this->surname = $surname;
+        return $this;
     }
 
     /**
@@ -149,10 +170,30 @@ class User implements UserInterface
 
     /**
      * @param string $firstName
+     * @return User
      */
-    public function setFirstName(string $firstName): void
+    public function setFirstName(string $firstName): User
     {
         $this->firstName = $firstName;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoles(): array
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param array $roles
+     * @return User
+     */
+    public function setRoles(array $roles): User
+    {
+        $this->roles = $roles;
+        return $this;
     }
 
     /**
@@ -165,19 +206,12 @@ class User implements UserInterface
 
     /**
      * @param User|null $child
+     * @return User
      */
-    public function setChild(?User $child): void
+    public function setChild(?User $child): User
     {
         $this->child = $child;
-    }
-
-    public function getRoles()
-    {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return $this;
     }
 
     public function getSalt()
@@ -187,21 +221,14 @@ class User implements UserInterface
 
     public function eraseCredentials()
     {
-        $this->plainPassword = null;
+        // TODO: Implement eraseCredentials() method.
     }
 
-    public function getUsername()
-    {
-        return $this->phone;
-    }
-
+    /**
+     * @return string
+     */
     public function getUserIdentifier()
     {
-        return $this->phone;
-    }
-
-    public function __call(string $name, array $arguments)
-    {
-
+        return $this->username;
     }
 }
